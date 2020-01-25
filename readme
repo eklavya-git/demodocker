@@ -1,0 +1,82 @@
+--System Preparation
+--Check username
+uname -r
+
+--OS update
+sudo yum -y update
+
+--Install docker
+sudo yum install -y docker
+
+--Check docker version
+docker --version
+
+--Install git
+sudo yum install git -y
+git --version
+
+--Install maven
+sudo yum install -y maven
+mvn --version
+
+--Install git
+sudo yum install -y java-1.8.0-openjdk
+java -version
+
+--Creating dir to check Git code out.
+mkdir checkout
+cd checkout/
+git clone https://github.com/jindalanshul01/demodocker.git
+
+--Build project via maven
+mvn clean install
+
+--Get docker info
+docker info
+
+--Start docker
+sudo service docker start
+
+----add your user to docker configuration. This will eliminate use of sudo.
+--exit the shell and re login for this to take effect.
+sudo usermod -a -G docker ec2-user
+
+--Login to have docker linked to the docker repo.
+docker login
+
+--List all docker images
+docker images
+
+--List all docker containers
+docker ps -a
+
+--Build docker image.
+--Go to the dir that contains Dockerfile.txt
+docker build -t eklavya02/docker_demo_repo .
+docker images -a
+
+--Prepare a tag fo the image thus formed
+docker tag --help
+docker tag eklavya02/docker_demo_repo:latest eklavya02/docker_demo_repo:docker_demo_image
+
+--Pusg the image/tag to the docker repository
+docker push --help
+docker push eklavya02/docker_demo_repo:docker_demo_image
+
+--This runs the application. Part 80:8080 means that we are mapping port 80 of our EC2 instance to the application port of 8000 which is defined in the docker file.
+docker run -p 80:8080 eklavya02/docker_demo_repo:docker_demo_image &
+
+--curl command to test if the application is up and rest end points accessbile.
+curl http://localhost/dockerdemo/docker
+ec2-18-188-71-60.us-east-2.compute.amazonaws.com/dockerdemo/docker
+
+--Start/Stop containers
+docker start b82cf4379697
+docker ps -a
+docker start b82cf4379697
+
+--Stop the docker. It may take some time to stop the service.
+sudo service docker stop
+
+--uninstall docker
+sudo yum remove docker
